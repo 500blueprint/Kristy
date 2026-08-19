@@ -14,9 +14,7 @@
 
 <style>
 
-/* =========================
-   RESET
-========================= */
+/* REMOVE ALL DEFAULT SPACING */
 
 * {
   box-sizing: border-box;
@@ -28,189 +26,63 @@ body {
   padding: 0;
 
   width: 100%;
-  height: 100%;
 
-  background: #000;
+  background: transparent;
+
+  overflow-x: hidden;
+}
+
+
+/* VIDEO WRAPPER */
+
+#mommas-bewitched {
+  position: relative;
+
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
 
   overflow: hidden;
 }
 
 
-/* =========================
-   MAIN CONTAINER
-========================= */
+/* VIDEO */
 
-.mommas-bewitched {
-
-  position: fixed;
-
-  top: 0;
-  left: 0;
+#mommas-video {
+  display: block;
 
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  height: auto;
 
-  overflow: hidden;
+  max-width: 100%;
 
-  background: #000;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  object-fit: contain;
+  object-position: center center;
+
+  background: transparent;
 }
 
 
-/* =========================
-   VIDEO
-========================= */
+/* MOBILE */
 
-.mommas-bewitched video {
+@media screen and (max-width: 768px) {
 
-  position: absolute;
-
-  top: 50%;
-  left: 50%;
-
-  width: 100%;
-  height: 100%;
-
-  transform:
-    translate(-50%, -50%);
-
-  object-fit: cover;
-
-  object-position: center;
-
-  background: #000;
-}
-
-
-/* =========================
-   SOFT WITCHY OVERLAY
-========================= */
-
-.witchy-overlay {
-
-  position: absolute;
-
-  inset: 0;
-
-  pointer-events: none;
-
-  z-index: 2;
-
-  background:
-
-    radial-gradient(
-      circle at center,
-      transparent 45%,
-      rgba(0,0,0,.18) 100%
-    );
-
-}
-
-
-/* =========================
-   MAGICAL SPARKLES
-========================= */
-
-.magic {
-
-  position: absolute;
-
-  z-index: 3;
-
-  pointer-events: none;
-
-  width: 4px;
-  height: 4px;
-
-  border-radius: 50%;
-
-  background: white;
-
-  box-shadow:
-
-    0 0 5px white,
-    0 0 10px #e2b6ff,
-    0 0 18px #a850e8;
-
-  opacity: 0;
-
-  animation:
-    floatMagic linear forwards;
-}
-
-
-/* =========================
-   MAGIC ANIMATION
-========================= */
-
-@keyframes floatMagic {
-
-  0% {
-
-    transform:
-      translateY(20px)
-      scale(.3);
-
-    opacity: 0;
-
-  }
-
-  20% {
-
-    opacity: .9;
-
-  }
-
-  70% {
-
-    opacity: .7;
-
-  }
-
-  100% {
-
-    transform:
-      translateY(-150px)
-      translateX(var(--move))
-      scale(1.3);
-
-    opacity: 0;
-
-  }
-
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 768px) {
-
-  .mommas-bewitched video {
-
+  #mommas-bewitched {
     width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    object-position: center;
-
   }
 
-}
-
-
-/* =========================
-   REDUCED MOTION
-========================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-  .magic {
-
-    display: none;
-
+  #mommas-video {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 
 }
@@ -223,18 +95,10 @@ body {
 <body>
 
 
-<div
-  class="mommas-bewitched"
-  id="mommasBewitched"
->
-
-
-  <!-- =====================
-       MOMMAS BEWITCHED VIDEO
-  ====================== -->
+<div id="mommas-bewitched">
 
   <video
-    id="mommasVideo"
+    id="mommas-video"
     autoplay
     muted
     loop
@@ -244,270 +108,90 @@ body {
   >
 
     <source
-      src="index.MP4"
+      src="./index.MP4"
       type="video/mp4"
     >
 
-    Your browser does not support HTML5 video.
-
   </video>
-
-
-  <!-- WITCHY OVERLAY -->
-
-  <div
-    class="witchy-overlay"
-  ></div>
-
 
 </div>
 
 
-
 <script>
 
-/* =========================
-   GET ELEMENTS
-========================= */
-
-const container =
-  document.getElementById(
-    "mommasBewitched"
-  );
-
 const video =
-  document.getElementById(
-    "mommasVideo"
-  );
+  document.getElementById("mommas-video");
 
 
-/* =========================
-   FORCE VIDEO PLAY
-========================= */
+/* KEEP VIDEO MUTED FOR AUTOPLAY */
 
-function startVideo() {
+video.muted = true;
 
-  if (!video) return;
 
-  video.muted = true;
+/* START VIDEO */
 
-  const playPromise =
+function playMommasVideo() {
+
+  const playAttempt =
     video.play();
 
-  if (
-    playPromise !== undefined
-  ) {
+  if (playAttempt !== undefined) {
 
-    playPromise.catch(
-      function () {
+    playAttempt.catch(function() {
 
-        console.log(
-          "Waiting for browser autoplay permission."
-        );
+      /* iPhone may wait for first interaction */
 
-      }
-    );
+    });
 
   }
 
 }
 
 
-/* TRY WHEN PAGE LOADS */
+/* PLAY WHEN READY */
 
-window.addEventListener(
-  "load",
-  startVideo
+video.addEventListener(
+  "loadeddata",
+  playMommasVideo
 );
-
-
-/* TRY WHEN VIDEO IS READY */
 
 video.addEventListener(
   "canplay",
-  startVideo
+  playMommasVideo
 );
 
 
-/* TRY AGAIN AFTER TAP */
+/* RETRY ON FIRST TOUCH */
 
 document.addEventListener(
   "touchstart",
-  startVideo,
-  {
-    once: true
-  }
+  playMommasVideo,
+  { once: true }
 );
 
 
-/* TRY AGAIN AFTER CLICK */
+/* RETRY ON CLICK */
 
 document.addEventListener(
   "click",
-  startVideo,
-  {
-    once: true
-  }
+  playMommasVideo,
+  { once: true }
 );
 
 
-/* =========================
-   CREATE MAGIC PARTICLES
-========================= */
-
-function createMagic() {
-
-  if (!container) return;
-
-  const sparkle =
-    document.createElement(
-      "span"
-    );
-
-  sparkle.className =
-    "magic";
-
-
-  /* RANDOM SIZE */
-
-  const size =
-    2 +
-    Math.random() * 5;
-
-  sparkle.style.width =
-    size + "px";
-
-  sparkle.style.height =
-    size + "px";
-
-
-  /* RANDOM POSITION */
-
-  sparkle.style.left =
-    (
-      5 +
-      Math.random() * 90
-    ) + "%";
-
-  sparkle.style.top =
-    (
-      45 +
-      Math.random() * 50
-    ) + "%";
-
-
-  /* RANDOM MOVEMENT */
-
-  sparkle.style.setProperty(
-
-    "--move",
-
-    (
-      -50 +
-      Math.random() * 100
-    ) + "px"
-
-  );
-
-
-  /* RANDOM SPEED */
-
-  sparkle.style.animationDuration =
-
-    (
-      3 +
-      Math.random() * 4
-    ) + "s";
-
-
-  container.appendChild(
-    sparkle
-  );
-
-
-  /* REMOVE AFTER ANIMATION */
-
-  setTimeout(
-
-    function () {
-
-      sparkle.remove();
-
-    },
-
-    7500
-
-  );
-
-}
-
-
-/* =========================
-   CONTINUOUS MAGIC
-========================= */
-
-setInterval(
-
-  createMagic,
-
-  550
-
-);
-
-
-/* =========================
-   EXTRA MAGIC WHEN TAPPED
-========================= */
-
-container.addEventListener(
-
-  "click",
-
-  function () {
-
-    for (
-      let i = 0;
-      i < 15;
-      i++
-    ) {
-
-      setTimeout(
-
-        createMagic,
-
-        i * 40
-
-      );
-
-    }
-
-  }
-
-);
-
-
-/* =========================
-   PAGE VISIBILITY
-   Restart video when visitor
-   returns to page
-========================= */
+/* RESTART IF USER RETURNS TO TAB */
 
 document.addEventListener(
-
   "visibilitychange",
+  function() {
 
-  function () {
+    if (!document.hidden) {
 
-    if (
-      !document.hidden
-    ) {
-
-      startVideo();
+      playMommasVideo();
 
     }
 
   }
-
 );
 
 </script>

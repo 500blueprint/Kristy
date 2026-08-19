@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Creative Control V9</title>
+<style>
+:root{--bg:#f7f1ff;--card:#fff;--ink:#251633;--muted:#71647d;--accent:#3b2056;--line:#ded4e8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:900px;margin:auto;padding:18px}.top{text-align:center;padding:16px 0}.top h1{font-size:34px;margin:0}.top p{color:var(--muted);margin:5px}
+.card{background:var(--card);border-radius:22px;padding:18px;margin:14px 0;box-shadow:0 6px 22px #43245c12}
+.homegrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tool{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,.08);border:1px solid var(--line);border-radius:20px;padding:22px;background:#fff;text-align:left}
+.tool:active{transform:scale(.99)}.tool b{font-size:21px}.tool span{display:block;color:var(--muted);margin-top:5px}
+label{display:block;font-weight:800;margin:12px 0 6px}input,select,button{font:inherit;width:100%;padding:13px;border-radius:13px}
+input,select{border:1px solid var(--line);background:#fff}button{border:0;background:var(--accent);color:#fff;font-weight:800;margin-top:10px}
+button.secondary{background:#eee7f5;color:var(--ink)}button:disabled{opacity:.45}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+canvas{width:100%;height:auto;border-radius:14px;background:#eee;touch-action:none}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:8px}
+.item{border:1px solid var(--line);border-radius:12px;padding:6px;text-align:center}.item img{width:100%;aspect-ratio:1;object-fit:contain}.item input{padding:6px;text-align:center}
+.muted{color:var(--muted)}.good{font-weight:800;color:#24703b}.warn{font-weight:800;color:#9a5d00}.hidden{display:none!important}
+.back{width:auto;padding:9px 14px}.seg{display:flex;gap:8px}.seg button{margin:0}.active{outline:3px solid #b89bd0}
+@media(max-width:560px){.homegrid{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}
+</style></head>
+<body><main>
+<section id="home">
+<div class="top"><h1>✨ Creative Control</h1><p>The Digital Designer's Toolbox • V9</p></div>
+<div class="homegrid">
+<div class="tool navtool" data-tool="splitter" role="button" tabindex="0"><b>✂️ Split It</b><span>Split alpha sheets, custom-name files, use auto or grid detection.</span></div>
+<div class="tool navtool" data-tool="clipper" role="button" tabindex="0"><b>🖼️ Clip It</b><span>Split clipart bundle sheets into individual transparent PNG files.</span></div>
+<div class="tool navtool" data-tool="renamer" role="button" tabindex="0"><b>🏷️ Name It</b><span>Bulk rename any files with collections, prefixes, suffixes, numbering, and custom patterns.</span></div>
+<div class="tool navtool" data-tool="checker" role="button" tabindex="0"><b>🔁 Check It</b><span>Test seamless tiles with repeat views and centered seam inspection.</span></div>
+<div class="tool navtool" data-tool="watermark" role="button" tabindex="0"><b>💧 Mark It</b><span>Bulk watermark preview images with text or your transparent PNG logo.</span></div>
+<div class="tool navtool" data-tool="cleaner" role="button" tabindex="0"><b>🧼 Clean It</b><span>Remove white/light backgrounds, trim empty space, and export transparent PNGs.</span></div>
+<div class="tool navtool" data-tool="sizer" role="button" tabindex="0"><b>📐 Size It</b><span>Bulk resize artwork onto square transparent canvases.</span></div>
+<div class="tool navtool" data-tool="packer" role="button" tabindex="0"><b>📦 Pack It</b><span>Rename and package multiple files into one customer-ready ZIP.</span></div>
+</div>
+</section>
+
+<section id="splitter" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>✂️ Split It V5</h1><p>Alpha splitter + Name It + Grid Mode</p></div>
+<div class="card">
+<label>Choose alpha image</label><input id="sfile" type="file" accept="image/*"><p id="schosen" class="muted">No image selected.</p>
+<div class="row"><div><label>Characters</label><select id="smode"><option value="upper">A–Z</option><option value="lower">a–z</option><option value="digits">0–9</option></select></div>
+<div><label>Padding</label><input id="spad" type="number" value="10" min="0"></div></div>
+<label>Split mode</label><select id="splitmode"><option value="auto">Automatic detection</option><option value="grid">Grid split</option></select>
+<div id="gridopts" class="row hidden"><div><label>Columns</label><input id="cols" type="number" value="5" min="1"></div><div><label>Rows</label><input id="rows" type="number" value="6" min="1"></div></div>
+<div id="autoopts"><label>Background tolerance</label><input id="stol" type="range" min="10" max="120" value="45"><p class="muted">Raise if background remains; lower if artwork disappears.</p></div>
+<hr style="border:0;border-top:1px solid #eee;margin:18px 0">
+<h2>🏷️ Name It</h2>
+<label>Collection / Product Name</label><input id="collection" placeholder="Preppy Halloween">
+<div class="row"><div><label>Prefix</label><input id="prefix" placeholder="MD"></div><div><label>Suffix</label><input id="suffix" placeholder="Alpha"></div></div>
+<label>Filename style</label><select id="namestyle"><option value="dash">Prefix-Collection-A-Suffix</option><option value="underscore">Prefix_Collection_A_Suffix</option><option value="space">Prefix Collection A Suffix</option><option value="simple">Collection-A</option></select>
+<p id="namepreview" class="muted">Preview: A.png</p>
+<button id="splitbtn" disabled>Split & Name</button>
+</div>
+<div id="spreview" class="card hidden"><canvas id="scanvas"></canvas><p id="sstatus"></p></div>
+<div id="sresults" class="card hidden">
+<div id="sgrid" class="grid"></div>
+<button id="szipdownload">Save Alpha ZIP</button>
+<button id="sdownload" class="secondary">Download Each PNG</button>
+<p class="muted">On iPhone, use <b>Save Alpha ZIP</b>. Safari handles one ZIP much more reliably than 26 separate downloads.</p>
+</div>
+</section>
+
+
+<section id="clipper" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>🖼️ Clip It V1</h1><p>Clipart Bundle Splitter</p></div>
+<div class="card">
+<label>Choose clipart bundle sheet</label><input id="cpfile" type="file" accept="image/*">
+<p id="cpchosen" class="muted">No image selected.</p>
+<label>Detection mode</label><select id="cpmode"><option value="auto">Automatic artwork detection</option><option value="grid">Grid split</option><option value="manual">Manual Select</option></select>
+<div id="cpgridopts" class="row hidden"><div><label>Columns</label><input id="cpcols" type="number" value="2" min="1" max="20"></div><div><label>Rows</label><input id="cprows" type="number" value="2" min="1" max="20"></div></div>
+<div id="cpautoopts">
+<label>Background tolerance</label><input id="cptol" type="range" min="5" max="140" value="45">
+<label>Grouping distance</label><input id="cpgap" type="range" min="0" max="120" value="25">
+<p class="muted">Grouping distance helps keep nearby floating stars, bows, sparkles, etc. with the main design.</p>
+</div>
+<div id="cpmanualhelp" class="hidden"><p class="muted"><b>Manual Select:</b> drag a box around each complete design on the image. Tap Clear Boxes to start over.</p><button id="cpclear" class="secondary">Clear Boxes</button></div>
+<div class="row"><div><label>Padding</label><input id="cppad" type="number" value="15" min="0" max="200"></div><div><label>Start number</label><input id="cpstart" type="number" value="1" min="0"></div></div>
+<label>Collection name</label><input id="cpname" placeholder="Spooky Cows">
+<label>Filename format</label><select id="cpnamestyle"><option value="number">Collection-01</option><option value="clip">Collection-Clipart-01</option><option value="simple">01</option></select>
+<button id="cpdetect" disabled>Detect Clipart</button>
+</div>
+<div id="cppreviewcard" class="card hidden"><canvas id="cpcanvas"></canvas><p id="cpstatus" class="muted"></p></div>
+<div id="cpresults" class="card hidden"><div id="cpgrid" class="grid"></div><button id="cpzip">Save Clipart ZIP</button><p class="muted">Review the pieces above before saving. You can edit each filename.</p></div>
+</section>
+
+
+<section id="renamer" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>🏷️ Name It V1</h1><p>Bulk File Naming Generator</p></div>
+<div class="card">
+<label>Choose files</label><input id="rnfiles" type="file" multiple>
+<p id="rncount" class="muted">No files selected.</p>
+<label>Collection / Product Name</label><input id="rncollection" placeholder="Preppy Halloween">
+<div class="row"><div><label>Prefix</label><input id="rnprefix" placeholder="MD"></div><div><label>Suffix</label><input id="rnsuffix" placeholder="PNG"></div></div>
+<div class="row"><div><label>Start number</label><input id="rnstart" type="number" value="1" min="0"></div><div><label>Number digits</label><select id="rndigits"><option value="1">1 → 1</option><option value="2" selected>2 → 01</option><option value="3">3 → 001</option></select></div></div>
+<label>Naming style</label><select id="rnstyle">
+<option value="pcns">Prefix-Collection-01-Suffix</option>
+<option value="cns">Collection-01-Suffix</option>
+<option value="cn">Collection-01</option>
+<option value="ncp">01-Collection-Prefix</option>
+<option value="original">Collection-OriginalName</option>
+</select>
+<label>Separator</label><select id="rnsep"><option value="-">Dash -</option><option value="_">Underscore _</option><option value=" ">Space</option></select>
+<label><input id="rnlower" type="checkbox" style="width:auto"> lowercase filenames</label>
+<p id="rnpreview" class="muted">Preview: 01.png</p>
+<button id="rnmake" disabled>Generate New Names</button>
+</div>
+<div id="rnresults" class="card hidden">
+<h2>Review Names</h2><div id="rngrid"></div>
+<button id="rnzip">Save Renamed Files as ZIP</button>
+<p class="muted">Your original files are not changed.</p>
+</div>
+</section>
+
+<section id="checker" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>🔁 Check It V1</h1><p>Seamless Pattern Tester</p></div>
+<div class="card">
+<label>Choose seamless tile</label><input id="cfile" type="file" accept="image/*"><p id="cchosen" class="muted">No tile selected.</p>
+<label>Repeat view</label><div class="seg"><button data-n="2">2×2</button><button data-n="3" class="active">3×3</button><button data-n="4">4×4</button><button data-n="6">6×6</button></div>
+<label>Inspection mode</label><select id="inspect"><option value="normal">Normal repeat</option><option value="center">Center the seams</option></select>
+<label><input id="lines" type="checkbox" style="width:auto"> Show tile boundary lines</label>
+<label>Zoom</label><input id="zoom" type="range" min="60" max="220" value="100">
+</div>
+<div class="card"><canvas id="ccanvas" width="900" height="900"></canvas><p id="cstatus" class="muted">Upload a tile to begin.</p></div>
+<div class="card"><h2>🔬 Seam Magnifier</h2><p class="muted">Tap anywhere on the repeat preview to magnify that area.</p><canvas id="magnify" width="600" height="300"></canvas></div>
+</section>
+
+<section id="watermark" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>💧 Mark It V1</h1><p>Bulk Watermark Tool</p></div>
+<div class="card">
+<label>Choose images to watermark</label>
+<input id="wfiles" type="file" accept="image/*" multiple>
+<p id="wcount" class="muted">No images selected.</p>
+
+<label>Watermark type</label>
+<select id="wtype"><option value="text">Text watermark</option><option value="logo">PNG logo watermark</option></select>
+
+<div id="wtextBox">
+<label>Watermark text</label><input id="wtext" value="SAMPLE" placeholder="Your Business Name">
+</div>
+<div id="wlogoBox" class="hidden">
+<label>Transparent PNG logo</label><input id="wlogo" type="file" accept="image/png,image/*">
+</div>
+
+<div class="row">
+<div><label>Opacity</label><input id="wopacity" type="range" min="5" max="100" value="35"></div>
+<div><label>Size</label><input id="wsize" type="range" min="5" max="80" value="24"></div>
+</div>
+<label>Placement</label>
+<select id="wplace">
+<option value="center">Center</option><option value="tile">Repeat across image</option>
+<option value="tl">Top left</option><option value="tr">Top right</option>
+<option value="bl">Bottom left</option><option value="br">Bottom right</option>
+</select>
+<label>Rotation</label><input id="wrotate" type="range" min="-60" max="60" value="-25">
+<button id="wmake" disabled>Apply Watermark to All</button>
+</div>
+<div id="wpreviewcard" class="card hidden">
+<h2>Preview</h2><canvas id="wpreview"></canvas>
+<p id="wstatus" class="muted"></p>
+</div>
+<div id="wresults" class="card hidden">
+<h2>Finished Files</h2><div id="wgrid" class="grid"></div>
+<button id="wdownload">Download All</button>
+</div>
+</section>
+
+
+<section id="cleaner" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>🧼 Clean It V1</h1><p>Bulk PNG Background Cleaner</p></div>
+<div class="card">
+<label>Choose images</label><input id="clfiles" type="file" accept="image/*" multiple>
+<p id="clcount" class="muted">No images selected.</p>
+<label>Background tolerance</label><input id="cltol" type="range" min="5" max="140" value="45">
+<label>Trim padding</label><input id="clpad" type="number" value="12" min="0" max="200">
+<button id="clmake" disabled>Clean & Trim All</button>
+</div>
+<div id="clresults" class="card hidden"><div id="clgrid" class="grid"></div><button id="cldownload">Download All PNGs</button></div>
+</section>
+
+<section id="sizer" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>📐 Size It V1</h1><p>Bulk Transparent Canvas Resizer</p></div>
+<div class="card">
+<label>Choose PNGs / images</label><input id="szfiles" type="file" accept="image/*" multiple>
+<p id="szcount" class="muted">No images selected.</p>
+<label>Output canvas</label><select id="szpreset"><option value="1000">1000 × 1000</option><option value="2000">2000 × 2000</option><option value="3000">3000 × 3000</option><option value="5000" selected>5000 × 5000</option><option value="custom">Custom square size</option></select>
+<input id="szcustom" class="hidden" type="number" value="5000" min="100" max="10000">
+<label>Artwork fill (%)</label><input id="szfill" type="range" min="20" max="100" value="88">
+<button id="szmake" disabled>Resize All</button>
+</div>
+<div id="szresults" class="card hidden"><div id="szgrid" class="grid"></div><button id="szdownload">Download All PNGs</button></div>
+</section>
+
+<section id="packer" class="hidden">
+<button class="back secondary" data-home="1">← Toolbox</button>
+<div class="top"><h1>📦 Pack It V1</h1><p>Customer ZIP Builder</p></div>
+<div class="card">
+<label>Choose files</label><input id="pkfiles" type="file" multiple>
+<p id="pkcount" class="muted">No files selected.</p>
+<label>ZIP name</label><input id="pkname" value="digital-design-bundle" placeholder="My Product Bundle">
+<label>Optional filename prefix</label><input id="pkprefix" placeholder="Preppy-Halloween">
+<label><input id="pknumber" type="checkbox" style="width:auto"> Add 01, 02, 03… to filenames</label>
+<button id="pkmake" disabled>Create ZIP</button>
+<p class="muted">ZIP creation loads a small library from the internet. Your selected files stay in your browser.</p>
+</div>
+<div id="pkstatus" class="card hidden"><p id="pkmsg" class="good"></p></div>
+</section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function showTool(id){
+ $('home').classList.add('hidden');
+ ['splitter','clipper','renamer','checker','watermark','cleaner','sizer','packer'].forEach(function(x){$(x).classList.add('hidden')});
+ $(id).classList.remove('hidden');
+ window.scrollTo(0,0);
+}
+function home(){
+ ['splitter','clipper','renamer','checker','watermark','cleaner','sizer','packer'].forEach(function(x){$(x).classList.add('hidden')});
+ $('home').classList.remove('hidden');
+ window.scrollTo(0,0);
+}
+document.querySelectorAll('.navtool').forEach(function(el){
+ el.addEventListener('click',function(){showTool(this.getAttribute('data-tool'))});
+ el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();showTool(this.getAttribute('data-tool'))}});
+});
+document.querySelectorAll('[data-home]').forEach(function(el){el.addEventListener('click',home)});
+
+/* SPLIT IT */
+let simg=null,sparts=[];
+$('splitmode').onchange=()=>{let g=$('splitmode').value==='grid';$('gridopts').classList.toggle('hidden',!g);$('autoopts').classList.toggle('hidden',g)};
+$('sfile').onchange=function(){let f=this.files&&this.files[0];if(!f)return;$('schosen').textContent='Selected: '+f.name;let r=new FileReader();r.onload=e=>{let im=new Image();im.onload=()=>{simg=im;$('splitbtn').disabled=false;sdraw([])};im.src=e.target.result};r.readAsDataURL(f)};
+function snames(){return $('smode').value==='upper'?[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']:$('smode').value==='lower'?[...'abcdefghijklmnopqrstuvwxyz']:[...'0123456789']}
+function clean(v){return(v||'').trim().replace(/[\/\\:*?"<>|]/g,'').replace(/\s+/g,' ')}
+function fname(letter){let a=clean($('prefix').value),b=clean($('collection').value),c=clean($('suffix').value),st=$('namestyle').value;if(st==='simple')return[b,letter].filter(Boolean).join('-')||letter;let sep=st==='underscore'?'_':st==='space'?' ':'-';return[a,b,letter,c].filter(Boolean).join(sep)||letter}
+function nameprev(){$('namepreview').textContent='Preview: '+fname('A')+'.png'};['prefix','collection','suffix','namestyle'].forEach(x=>$(x).addEventListener('input',nameprev));
+function source(){let c=document.createElement('canvas');c.width=simg.naturalWidth;c.height=simg.naturalHeight;let x=c.getContext('2d',{willReadFrequently:true});x.drawImage(simg,0,0);let q=x.getImageData(0,0,c.width,c.height);return{w:c.width,h:c.height,d:q.data}}
+function maskSource(){let M=source(),{w,h,d}=M,s=[];let step=Math.max(1,Math.floor(Math.min(w,h)/100));function add(x,y){let i=(y*w+x)*4;if(d[i+3]>20)s.push([d[i],d[i+1],d[i+2]])}for(let x=0;x<w;x+=step){add(x,0);add(x,h-1)}for(let y=0;y<h;y+=step){add(0,y);add(w-1,y)}let av=k=>s.length?s.reduce((z,v)=>z+v[k],0)/s.length:255,bg=[av(0),av(1),av(2)],tol=+$('stol').value,mask=new Uint8Array(w*h);for(let p=0;p<w*h;p++){let i=p*4;if(d[i+3]<15)continue;let dr=d[i]-bg[0],dg=d[i+1]-bg[1],db=d[i+2]-bg[2];if(Math.sqrt(dr*dr+dg*dg+db*db)>tol)mask[p]=1}return{...M,mask}}
+function runs(a,min){let o=[],s=-1;for(let i=0;i<=a.length;i++){if(i<a.length&&a[i]&&s<0)s=i;if((i===a.length||!a[i])&&s>=0){if(i-s>=min)o.push([s,i-1]);s=-1}}return o}
+function bridge(a,g){let l=-1;for(let i=0;i<a.length;i++)if(a[i]){if(l>=0&&i-l-1<=g)for(let j=l+1;j<i;j++)a[j]=1;l=i}}
+function autoBoxes(M){let row=new Uint8Array(M.h);for(let y=0;y<M.h;y++){let n=0;for(let x=0;x<M.w;x++)n+=M.mask[y*M.w+x];if(n>M.w*.002)row[y]=1}bridge(row,Math.max(2,Math.round(M.h*.006)));let rr=runs(row,Math.max(4,M.h*.015)),bs=[];rr.forEach(R=>{let col=new Uint8Array(M.w);for(let x=0;x<M.w;x++){let n=0;for(let y=R[0];y<=R[1];y++)n+=M.mask[y*M.w+x];if(n>2)col[x]=1}bridge(col,Math.max(1,M.w*.002));runs(col,Math.max(4,M.w*.008)).forEach(C=>bs.push({x:C[0],y:R[0],w:C[1]-C[0]+1,h:R[1]-R[0]+1}))});return bs}
+function gridBoxes(M){let C=Math.max(1,+$('cols').value||1),R=Math.max(1,+$('rows').value||1),bs=[];for(let y=0;y<R;y++)for(let x=0;x<C;x++){let x0=Math.round(x*M.w/C),x1=Math.round((x+1)*M.w/C),y0=Math.round(y*M.h/R),y1=Math.round((y+1)*M.h/R);bs.push({x:x0,y:y0,w:x1-x0,h:y1-y0})}return bs}
+function sdraw(bs){let c=$('scanvas'),x=c.getContext('2d');c.width=simg.naturalWidth;c.height=simg.naturalHeight;x.drawImage(simg,0,0);x.strokeStyle='#ff1684';x.lineWidth=Math.max(2,c.width/500);bs.forEach(b=>x.strokeRect(b.x,b.y,b.w,b.h));$('spreview').classList.remove('hidden')}
+function crop(M,b,p,removeBG){let x0=Math.max(0,b.x-p),y0=Math.max(0,b.y-p),x1=Math.min(M.w,b.x+b.w+p),y1=Math.min(M.h,b.y+b.h+p),c=document.createElement('canvas');c.width=x1-x0;c.height=y1-y0;let x=c.getContext('2d');if(!removeBG){x.drawImage(simg,x0,y0,c.width,c.height,0,0,c.width,c.height);return c}let o=x.createImageData(c.width,c.height);for(let y=0;y<c.height;y++)for(let xx=0;xx<c.width;xx++){let sp=(y+y0)*M.w+xx+x0,si=sp*4,di=(y*c.width+xx)*4;o.data[di]=M.d[si];o.data[di+1]=M.d[si+1];o.data[di+2]=M.d[si+2];o.data[di+3]=M.mask[sp]?M.d[si+3]:0}x.putImageData(o,0,0);return c}
+$('splitbtn').onclick=()=>{let auto=$('splitmode').value==='auto',M=auto?maskSource():source(),bs=auto?autoBoxes(M):gridBoxes(M),labs=snames(),pad=Math.max(0,+$('spad').value||0);sdraw(bs);sparts=[];$('sgrid').innerHTML='';bs.slice(0,labs.length).forEach((b,i)=>{let c=crop(M,b,pad,auto),url=c.toDataURL('image/png'),p={url,name:fname(labs[i])};sparts.push(p);let d=document.createElement('div');d.className='item';d.innerHTML='<img src="'+url+'"><input value="'+p.name+'">';d.querySelector('input').oninput=e=>p.name=e.target.value||p.name;$('sgrid').appendChild(d)});$('sresults').classList.remove('hidden');$('sstatus').className=bs.length>=labs.length?'good':'warn';$('sstatus').textContent='Found '+bs.length+' areas; exported '+Math.min(bs.length,labs.length)+' labeled files.'};
+
+$('szipdownload').onclick=async function(){
+ if(!sparts.length){alert('Split your alpha first.');return}
+ if(!window.JSZip){alert('ZIP support did not load. Make sure you are online, then refresh the page.');return}
+ try{
+   let zip=new JSZip();
+   for(let i=0;i<sparts.length;i++){
+     let p=sparts[i],res=await fetch(p.url),blob=await res.blob();
+     zip.file((p.name||('letter-'+(i+1)))+'.png',blob);
+   }
+   this.disabled=true;this.textContent='Building ZIP…';
+   let blob=await zip.generateAsync({type:'blob'});
+   let url=URL.createObjectURL(blob),a=document.createElement('a');
+   a.href=url;a.download=(clean($('collection').value).replace(/\s+/g,'-')||'alpha-set')+'.zip';
+   document.body.appendChild(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),10000);
+   this.textContent='✓ ZIP Ready / Saved';
+   setTimeout(()=>{this.disabled=false;this.textContent='Save Alpha ZIP'},1800);
+ }catch(e){this.disabled=false;this.textContent='Save Alpha ZIP';alert('Could not create ZIP: '+e.message)}
+};
+
+$('sdownload').onclick=()=>{sparts.forEach((p,i)=>setTimeout(()=>{let a=document.createElement('a');a.href=p.url;a.download=p.name+'.png';a.click()},i*220));alert('Safari may ask to allow multiple downloads.')};
+
+
+/* CLIP IT */
+let cpimg=null,cpM=null,cpboxes=[],cpout=[],cpdrag=null;
+$('cpmode').onchange=function(){
+ let m=this.value;$('cpgridopts').classList.toggle('hidden',m!=='grid');$('cpautoopts').classList.toggle('hidden',m!=='auto');$('cpmanualhelp').classList.toggle('hidden',m!=='manual');
+ if(cpimg){cpboxes=[];cpDraw()}
+};
+$('cpfile').onchange=function(){let f=this.files&&this.files[0];if(!f)return;$('cpchosen').textContent='Selected: '+f.name;let r=new FileReader();r.onload=e=>{let im=new Image();im.onload=()=>{cpimg=im;$('cpdetect').disabled=false;cpPrepare();cpDraw()};im.src=e.target.result};r.readAsDataURL(f)};
+function cpPrepare(){
+ let c=document.createElement('canvas');c.width=cpimg.naturalWidth;c.height=cpimg.naturalHeight;let x=c.getContext('2d',{willReadFrequently:true});x.drawImage(cpimg,0,0);let q=x.getImageData(0,0,c.width,c.height),d=q.data,w=c.width,h=c.height,pts=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]],bg=[0,1,2].map(k=>pts.reduce((a,p)=>a+d[(p[1]*w+p[0])*4+k],0)/4),tol=+$('cptol').value,mask=new Uint8Array(w*h);
+ for(let p=0;p<w*h;p++){let i=p*4;if(d[i+3]<12)continue;let dr=d[i]-bg[0],dg=d[i+1]-bg[1],db=d[i+2]-bg[2];if(Math.sqrt(dr*dr+dg*dg+db*db)>tol)mask[p]=1}
+ cpM={w,h,d,mask};
+}
+function cpAuto(){
+ cpPrepare();let M=cpM,w=M.w,h=M.h,seen=new Uint8Array(w*h),comps=[],minPix=Math.max(20,Math.floor(w*h*.00002));
+ for(let p=0;p<w*h;p++){if(!M.mask[p]||seen[p])continue;let stack=[p],minx=w,miny=h,maxx=0,maxy=0,n=0;seen[p]=1;
+  while(stack.length){let z=stack.pop(),x=z%w,y=(z/w)|0;n++;minx=Math.min(minx,x);maxx=Math.max(maxx,x);miny=Math.min(miny,y);maxy=Math.max(maxy,y);
+   let ns=[];if(x)ns.push(z-1);if(x<w-1)ns.push(z+1);if(y)ns.push(z-w);if(y<h-1)ns.push(z+w);for(const a of ns)if(M.mask[a]&&!seen[a]){seen[a]=1;stack.push(a)}
+  }if(n>=minPix)comps.push({x:minx,y:miny,w:maxx-minx+1,h:maxy-miny+1});
+ }
+ // Merge components whose expanded boxes overlap; useful for decorative floating pieces.
+ let gap=+$('cpgap').value,changed=true;
+ while(changed){changed=false;outer:for(let i=0;i<comps.length;i++)for(let j=i+1;j<comps.length;j++){let a=comps[i],b=comps[j],hit=a.x-gap<=b.x+b.w&&a.x+a.w+gap>=b.x&&a.y-gap<=b.y+b.h&&a.y+a.h+gap>=b.y;if(hit){let x=Math.min(a.x,b.x),y=Math.min(a.y,b.y),r=Math.max(a.x+a.w,b.x+b.w),bt=Math.max(a.y+a.h,b.y+b.h);comps[i]={x,y,w:r-x,h:bt-y};comps.splice(j,1);changed=true;break outer}}}
+ comps.sort((a,b)=>Math.abs(a.y-b.y)>Math.max(a.h,b.h)*.45?a.y-b.y:a.x-b.x);return comps;
+}
+function cpGrid(){let C=Math.max(1,+$('cpcols').value||1),R=Math.max(1,+$('cprows').value||1),bs=[];for(let y=0;y<R;y++)for(let x=0;x<C;x++){let x0=Math.round(x*cpimg.naturalWidth/C),x1=Math.round((x+1)*cpimg.naturalWidth/C),y0=Math.round(y*cpimg.naturalHeight/R),y1=Math.round((y+1)*cpimg.naturalHeight/R);bs.push({x:x0,y:y0,w:x1-x0,h:y1-y0})}return bs}
+function cpDraw(){
+ if(!cpimg)return;let c=$('cpcanvas'),x=c.getContext('2d');c.width=cpimg.naturalWidth;c.height=cpimg.naturalHeight;x.drawImage(cpimg,0,0);x.strokeStyle='#ff1684';x.lineWidth=Math.max(2,c.width/500);cpboxes.forEach((b,i)=>{x.strokeRect(b.x,b.y,b.w,b.h);x.fillStyle='#ff1684';x.font=Math.max(18,c.width/40)+'px sans-serif';x.fillText(String(i+1),b.x+5,b.y+Math.max(22,c.width/40))});$('cppreviewcard').classList.remove('hidden')
+}
+function cpCoords(e){let c=$('cpcanvas'),r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}}
+$('cpcanvas').addEventListener('pointerdown',e=>{if($('cpmode').value!=='manual')return;let p=cpCoords(e);cpdrag={x:p.x,y:p.y};$('cpcanvas').setPointerCapture(e.pointerId)});
+$('cpcanvas').addEventListener('pointerup',e=>{if(!cpdrag||$('cpmode').value!=='manual')return;let q=cpCoords(e),x=Math.min(cpdrag.x,q.x),y=Math.min(cpdrag.y,q.y),w=Math.abs(q.x-cpdrag.x),h=Math.abs(q.y-cpdrag.y);if(w>10&&h>10)cpboxes.push({x,y,w,h});cpdrag=null;cpDraw();$('cpstatus').textContent=cpboxes.length+' manual selection(s).'});
+$('cpclear').onclick=()=>{cpboxes=[];cpDraw();$('cpstatus').textContent='Boxes cleared.'};
+function cpFileName(i){let col=clean($('cpname').value).replace(/\s+/g,'-'),n=String((+$('cpstart').value||1)+i).padStart(2,'0'),st=$('cpnamestyle').value;if(st==='simple')return n;if(st==='clip')return[col,'Clipart',n].filter(Boolean).join('-');return[col,n].filter(Boolean).join('-')}
+async function cpBuild(){
+ cpout=[];$('cpgrid').innerHTML='';let pad=Math.max(0,+$('cppad').value||0),removeBG=$('cpmode').value==='auto';if(removeBG)cpPrepare();let M=removeBG?cpM:{w:cpimg.naturalWidth,h:cpimg.naturalHeight};
+ for(let i=0;i<cpboxes.length;i++){let b=cpboxes[i],x0=Math.max(0,Math.floor(b.x-pad)),y0=Math.max(0,Math.floor(b.y-pad)),x1=Math.min(M.w,Math.ceil(b.x+b.w+pad)),y1=Math.min(M.h,Math.ceil(b.y+b.h+pad)),c=document.createElement('canvas');c.width=x1-x0;c.height=y1-y0;let x=c.getContext('2d');
+  if(removeBG){let o=x.createImageData(c.width,c.height);for(let yy=0;yy<c.height;yy++)for(let xx=0;xx<c.width;xx++){let sp=(yy+y0)*M.w+xx+x0,si=sp*4,di=(yy*c.width+xx)*4;o.data[di]=M.d[si];o.data[di+1]=M.d[si+1];o.data[di+2]=M.d[si+2];o.data[di+3]=M.mask[sp]?M.d[si+3]:0}x.putImageData(o,0,0)}
+  else x.drawImage(cpimg,x0,y0,c.width,c.height,0,0,c.width,c.height);
+  let blob=await new Promise(r=>c.toBlob(r,'image/png')),url=URL.createObjectURL(blob),o={blob,url,name:cpFileName(i)};cpout.push(o);let d=document.createElement('div');d.className='item';d.innerHTML='<img src="'+url+'"><input value="'+o.name+'">';d.querySelector('input').oninput=e=>o.name=e.target.value||o.name;$('cpgrid').appendChild(d);
+ }$('cpresults').classList.remove('hidden');$('cpstatus').textContent='Found '+cpboxes.length+' clipart piece(s). Review them before saving.';
+}
+$('cpdetect').onclick=async function(){let m=$('cpmode').value;if(m==='auto')cpboxes=cpAuto();else if(m==='grid')cpboxes=cpGrid();else if(!cpboxes.length){$('cpstatus').textContent='Draw boxes around each design first.';cpDraw();return}cpDraw();await cpBuild()};
+$('cpzip').onclick=async function(){if(!cpout.length){alert('Detect your clipart first.');return}if(!window.JSZip){alert('ZIP support did not load. Refresh while online.');return}let z=new JSZip();cpout.forEach(o=>z.file(o.name+'.png',o.blob));let blob=await z.generateAsync({type:'blob'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=(clean($('cpname').value).replace(/\s+/g,'-')||'clipart-bundle')+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(u),8000)};
+
+
+/* NAME IT */
+let rnitems=[];
+function rnBase(v){return clean(v)}
+function rnName(i,file){
+ let pre=rnBase($('rnprefix').value),col=rnBase($('rncollection').value),suf=rnBase($('rnsuffix').value),sep=$('rnsep').value;
+ let num=String((+$('rnstart').value||0)+i).padStart(+$('rndigits').value,'0');
+ let dot=file.name.lastIndexOf('.'),orig=dot>=0?file.name.slice(0,dot):file.name,st=$('rnstyle').value,bits=[];
+ if(st==='pcns')bits=[pre,col,num,suf];
+ if(st==='cns')bits=[col,num,suf];
+ if(st==='cn')bits=[col,num];
+ if(st==='ncp')bits=[num,col,pre];
+ if(st==='original')bits=[col,orig];
+ let out=bits.filter(Boolean).join(sep)||num;
+ if($('rnlower').checked)out=out.toLowerCase();
+ return out;
+}
+function rnExt(file){let i=file.name.lastIndexOf('.');return i>=0?file.name.slice(i):''}
+function rnUpdatePreview(){if(rnitems.length)$('rnpreview').textContent='Preview: '+rnName(0,rnitems[0].file)+rnExt(rnitems[0].file);else $('rnpreview').textContent='Preview: '+rnName(0,{name:'file.png'})+'.png'}
+['rncollection','rnprefix','rnsuffix','rnstart','rndigits','rnstyle','rnsep','rnlower'].forEach(id=>$(id).addEventListener('input',rnUpdatePreview));
+$('rnfiles').onchange=function(){rnitems=[...(this.files||[])].map(f=>({file:f,name:''}));$('rncount').textContent=rnitems.length+' file(s) selected.';$('rnmake').disabled=!rnitems.length;rnUpdatePreview()};
+$('rnmake').onclick=function(){
+ let g=$('rngrid');g.innerHTML='';
+ rnitems.forEach((it,i)=>{it.name=rnName(i,it.file)+rnExt(it.file);let d=document.createElement('div');d.className='card';d.style.margin='7px 0';d.style.padding='10px';d.innerHTML='<div class="muted" style="font-size:12px">From: '+it.file.name+'</div><input value="'+it.name.replace(/"/g,'&quot;')+'">';d.querySelector('input').oninput=e=>it.name=e.target.value||it.name;g.appendChild(d)});
+ $('rnresults').classList.remove('hidden');
+};
+$('rnzip').onclick=async function(){
+ if(!rnitems.length)return;if(!window.JSZip){alert('ZIP support did not load. Refresh while online.');return}
+ let z=new JSZip(),used={};
+ rnitems.forEach((it,i)=>{let n=it.name||rnName(i,it.file)+rnExt(it.file);if(used[n]){let dot=n.lastIndexOf('.'),base=dot>=0?n.slice(0,dot):n,ext=dot>=0?n.slice(dot):'';used[n]++;n=base+'-'+used[n]+ext}else used[n]=1;z.file(n,it.file)});
+ let blob=await z.generateAsync({type:'blob'}),u=URL.createObjectURL(blob),a=document.createElement('a'),zn=(clean($('rncollection').value).replace(/\s+/g,'-')||'renamed-files');a.href=u;a.download=zn+'-renamed.zip';a.click();setTimeout(()=>URL.revokeObjectURL(u),8000);
+};
+
+/* CHECK IT */
+let cimg=null,repeatN=3,lastTap={x:450,y:450};
+$('cfile').onchange=function(){let f=this.files&&this.files[0];if(!f)return;$('cchosen').textContent='Selected: '+f.name;let r=new FileReader();r.onload=e=>{let im=new Image();im.onload=()=>{cimg=im;renderCheck();$('cstatus').textContent='Tile: '+im.naturalWidth+' × '+im.naturalHeight+' px';};im.src=e.target.result};r.readAsDataURL(f)};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');repeatN=+b.dataset.n;renderCheck()});
+['inspect','lines','zoom'].forEach(id=>$(id).addEventListener('input',renderCheck));
+function renderCheck(){if(!cimg)return;let c=$('ccanvas'),x=c.getContext('2d'),z=+$('zoom').value/100,n=repeatN,tile=c.width/n*z,offset=$('inspect').value==='center'?-tile/2:0;x.clearRect(0,0,c.width,c.height);for(let yy=offset;yy<c.height;yy+=tile)for(let xx=offset;xx<c.width;xx+=tile)x.drawImage(cimg,xx,yy,tile,tile);if($('lines').checked){x.strokeStyle='rgba(255,0,100,.75)';x.lineWidth=2;for(let q=offset;q<=c.width;q+=tile){x.beginPath();x.moveTo(q,0);x.lineTo(q,c.height);x.stroke()}for(let q=offset;q<=c.height;q+=tile){x.beginPath();x.moveTo(0,q);x.lineTo(c.width,q);x.stroke()}}renderMag()}
+$('ccanvas').addEventListener('pointerdown',e=>{let r=$('ccanvas').getBoundingClientRect();lastTap={x:(e.clientX-r.left)*$('ccanvas').width/r.width,y:(e.clientY-r.top)*$('ccanvas').height/r.height};renderMag()});
+function renderMag(){if(!cimg)return;let src=$('ccanvas'),m=$('magnify'),x=m.getContext('2d'),sw=180,sh=90,sx=Math.max(0,Math.min(src.width-sw,lastTap.x-sw/2)),sy=Math.max(0,Math.min(src.height-sh,lastTap.y-sh/2));x.clearRect(0,0,m.width,m.height);x.imageSmoothingEnabled=false;x.drawImage(src,sx,sy,sw,sh,0,0,m.width,m.height);x.imageSmoothingEnabled=true}
+
+/* MARK IT */
+let wimgs=[],wlogo=null,wout=[];
+$('wtype').onchange=function(){
+ let logo=this.value==='logo';
+ $('wtextBox').classList.toggle('hidden',logo);
+ $('wlogoBox').classList.toggle('hidden',!logo);
+};
+$('wfiles').onchange=async function(){
+ wimgs=[]; let fs=[...(this.files||[])];
+ for(const f of fs){let url=await fileURL(f),im=await loadImg(url);wimgs.push({file:f,img:im})}
+ $('wcount').textContent=wimgs.length+' image'+(wimgs.length===1?'':'s')+' selected.';
+ $('wmake').disabled=!wimgs.length;
+ if(wimgs.length) renderWatermarkPreview();
+};
+$('wlogo').onchange=async function(){let f=this.files&&this.files[0];if(!f)return;wlogo=await loadImg(await fileURL(f));renderWatermarkPreview()};
+['wtext','wopacity','wsize','wplace','wrotate'].forEach(id=>$(id).addEventListener('input',renderWatermarkPreview));
+function fileURL(f){return new Promise(res=>{let r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(f)})}
+function loadImg(url){return new Promise((res,rej)=>{let i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url})}
+function watermarkCanvas(im,maxPreview){
+ let scale=maxPreview?Math.min(1,maxPreview/Math.max(im.naturalWidth,im.naturalHeight)):1;
+ let c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);
+ let x=c.getContext('2d');x.drawImage(im,0,0,c.width,c.height);
+ let op=+$('wopacity').value/100,sz=+$('wsize').value/100,rot=+$('wrotate').value*Math.PI/180,place=$('wplace').value;
+ x.save();x.globalAlpha=op;
+ function one(cx,cy){
+  x.save();x.translate(cx,cy);x.rotate(rot);
+  if($('wtype').value==='logo'&&wlogo){
+   let ww=c.width*sz,hh=ww*(wlogo.naturalHeight/wlogo.naturalWidth);x.drawImage(wlogo,-ww/2,-hh/2,ww,hh);
+  }else{
+   let text=$('wtext').value||'SAMPLE',fs=Math.max(14,c.width*sz*.32);
+   x.font='800 '+fs+'px -apple-system,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';
+   x.lineWidth=Math.max(2,fs*.06);x.strokeStyle='white';x.fillStyle='black';x.strokeText(text,0,0);x.fillText(text,0,0);
+  } x.restore();
+ }
+ if(place==='tile'){
+  let dx=Math.max(120,c.width*.38),dy=Math.max(100,c.height*.25);
+  for(let yy=-dy;yy<c.height+dy;yy+=dy)for(let xx=-dx;xx<c.width+dx;xx+=dx)one(xx,yy);
+ }else{
+  let m=Math.min(c.width,c.height)*.1,px=c.width/2,py=c.height/2;
+  if(place==='tl'){px=m;py=m}if(place==='tr'){px=c.width-m;py=m}
+  if(place==='bl'){px=m;py=c.height-m}if(place==='br'){px=c.width-m;py=c.height-m}
+  one(px,py);
+ }
+ x.restore();return c;
+}
+function renderWatermarkPreview(){
+ if(!wimgs.length)return;
+ let temp=watermarkCanvas(wimgs[0].img,900),c=$('wpreview'),x=c.getContext('2d');c.width=temp.width;c.height=temp.height;x.drawImage(temp,0,0);
+ $('wpreviewcard').classList.remove('hidden');
+ $('wstatus').textContent='Previewing the first selected image. Original files are not changed.';
+}
+$('wmake').onclick=async function(){
+ if($('wtype').value==='logo'&&!wlogo){alert('Choose your PNG logo first.');return}
+ wout=[];$('wgrid').innerHTML='';$('wstatus').textContent='Creating watermarked copies…';
+ for(let i=0;i<wimgs.length;i++){
+  let item=wimgs[i],c=watermarkCanvas(item.img,0),blob=await new Promise(r=>c.toBlob(r,'image/png')),url=URL.createObjectURL(blob);
+  let base=item.file.name.replace(/\.[^.]+$/,'');let out={blob,url,name:base+'-watermarked.png'};wout.push(out);
+  let d=document.createElement('div');d.className='item';d.innerHTML='<img src="'+url+'"><input value="'+out.name.replace(/\.png$/,'')+'">';
+  d.querySelector('input').oninput=e=>out.name=(e.target.value||base+'-watermarked')+'.png';$('wgrid').appendChild(d);
+ }
+ $('wresults').classList.remove('hidden');$('wstatus').textContent='Finished '+wout.length+' image'+(wout.length===1?'':'s')+'.';
+};
+$('wdownload').onclick=function(){
+ wout.forEach((p,i)=>setTimeout(()=>{let a=document.createElement('a');a.href=p.url;a.download=p.name;a.click()},i*250));
+ alert('Safari may ask you to allow multiple downloads. Tap Allow.');
+};
+
+
+/* SHARED BULK HELPERS */
+function readAsURL(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(f)})}
+function imageFromFile(f){return readAsURL(f).then(loadImg)}
+function downloadOutputs(arr){arr.forEach((p,i)=>setTimeout(()=>{let a=document.createElement('a');a.href=p.url;a.download=p.name;document.body.appendChild(a);a.click();a.remove()},i*240));alert('Safari may ask you to allow multiple downloads. Tap Allow.')}
+
+/* CLEAN IT */
+let clitems=[],clout=[];
+$('clfiles').onchange=async function(){clitems=[];for(const f of [...(this.files||[])])clitems.push({file:f,img:await imageFromFile(f)});$('clcount').textContent=clitems.length+' image(s) selected.';$('clmake').disabled=!clitems.length};
+$('clmake').onclick=async function(){
+ clout=[];$('clgrid').innerHTML='';let tol=+$('cltol').value,pad=+$('clpad').value;
+ for(const it of clitems){
+  let im=it.img,w=im.naturalWidth,h=im.naturalHeight,c=document.createElement('canvas');c.width=w;c.height=h;let x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);let q=x.getImageData(0,0,w,h),d=q.data;
+  let pts=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]],bg=[0,1,2].map(k=>pts.reduce((a,p)=>a+d[(p[1]*w+p[0])*4+k],0)/4);
+  let minx=w,miny=h,maxx=-1,maxy=-1;
+  for(let y=0;y<h;y++)for(let xx=0;xx<w;xx++){let i=(y*w+xx)*4,dr=d[i]-bg[0],dg=d[i+1]-bg[1],db=d[i+2]-bg[2];if(d[i+3]<10||Math.sqrt(dr*dr+dg*dg+db*db)<=tol)d[i+3]=0;else{minx=Math.min(minx,xx);maxx=Math.max(maxx,xx);miny=Math.min(miny,y);maxy=Math.max(maxy,y)}}
+  x.putImageData(q,0,0);if(maxx<0)continue;let x0=Math.max(0,minx-pad),y0=Math.max(0,miny-pad),x1=Math.min(w,maxx+pad+1),y1=Math.min(h,maxy+pad+1),o=document.createElement('canvas');o.width=x1-x0;o.height=y1-y0;o.getContext('2d').drawImage(c,x0,y0,o.width,o.height,0,0,o.width,o.height);
+  let blob=await new Promise(r=>o.toBlob(r,'image/png')),url=URL.createObjectURL(blob),base=it.file.name.replace(/\.[^.]+$/,'');clout.push({url,blob,name:base+'-clean.png'});
+  let div=document.createElement('div');div.className='item';div.innerHTML='<img src="'+url+'"><div class="muted">'+base+'</div>';$('clgrid').appendChild(div);
+ }
+ $('clresults').classList.remove('hidden');
+};
+$('cldownload').onclick=()=>downloadOutputs(clout);
+
+/* SIZE IT */
+let szitems=[],szout=[];
+$('szpreset').onchange=function(){$('szcustom').classList.toggle('hidden',this.value!=='custom')};
+$('szfiles').onchange=async function(){szitems=[];for(const f of [...(this.files||[])])szitems.push({file:f,img:await imageFromFile(f)});$('szcount').textContent=szitems.length+' image(s) selected.';$('szmake').disabled=!szitems.length};
+$('szmake').onclick=async function(){
+ szout=[];$('szgrid').innerHTML='';let size=$('szpreset').value==='custom'?Math.max(100,+$('szcustom').value||5000):+$('szpreset').value,fill=+$('szfill').value/100;
+ for(const it of szitems){let c=document.createElement('canvas');c.width=size;c.height=size;let x=c.getContext('2d'),max=size*fill,ratio=Math.min(max/it.img.naturalWidth,max/it.img.naturalHeight),w=it.img.naturalWidth*ratio,h=it.img.naturalHeight*ratio;x.drawImage(it.img,(size-w)/2,(size-h)/2,w,h);let blob=await new Promise(r=>c.toBlob(r,'image/png')),url=URL.createObjectURL(blob),base=it.file.name.replace(/\.[^.]+$/,'');szout.push({url,blob,name:base+'-'+size+'x'+size+'.png'});let d=document.createElement('div');d.className='item';d.innerHTML='<img src="'+url+'"><div class="muted">'+size+'×'+size+'</div>';$('szgrid').appendChild(d)}
+ $('szresults').classList.remove('hidden');
+};
+$('szdownload').onclick=()=>downloadOutputs(szout);
+
+/* PACK IT */
+let pkitems=[];
+$('pkfiles').onchange=function(){pkitems=[...(this.files||[])];$('pkcount').textContent=pkitems.length+' file(s) selected.';$('pkmake').disabled=!pkitems.length};
+function safeFile(v){return clean(v).replace(/\s+/g,'-')||'bundle'}
+$('pkmake').onclick=async function(){
+ if(!window.JSZip){alert('ZIP library could not load. Check your internet connection and reopen Creative Control.');return}
+ let z=new JSZip(),pre=safeFile($('pkprefix').value),number=$('pknumber').checked;
+ for(let i=0;i<pkitems.length;i++){let f=pkitems[i],dot=f.name.lastIndexOf('.'),base=dot>=0?f.name.slice(0,dot):f.name,ext=dot>=0?f.name.slice(dot):'',bits=[];if($('pkprefix').value.trim())bits.push(pre);if(number)bits.push(String(i+1).padStart(2,'0'));bits.push(base);z.file(bits.join('-')+ext,f)}
+ let blob=await z.generateAsync({type:'blob'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=safeFile($('pkname').value)+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);$('pkstatus').classList.remove('hidden');$('pkmsg').textContent='ZIP created with '+pkitems.length+' files.';
+};
+
+</script></body></html>

@@ -2,88 +2,149 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<title>Mommas Bewitched Creations</title>
+<title>Momma's Bewitched Creations</title>
 
 <style>
 
-/* REMOVE ALL DEFAULT SPACING */
+/* ============================
+   RESET
+============================ */
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-
-  width: 100%;
-
-  background: transparent;
-
-  overflow-x: hidden;
-}
-
-
-/* VIDEO WRAPPER */
-
-#mommas-bewitched {
-  position: relative;
-
-  width: 100%;
-
-  margin: 0;
-  padding: 0;
-
-  background: transparent;
-
-  overflow: hidden;
-}
-
-
-/* VIDEO */
-
-#mommas-video {
-  display: block;
-
-  width: 100%;
-  height: auto;
-
-  max-width: 100%;
-
-  margin: 0;
-  padding: 0;
-
-  border: 0;
-
-  object-fit: contain;
-  object-position: center center;
-
-  background: transparent;
-}
-
-
-/* MOBILE */
-
-@media screen and (max-width: 768px) {
-
-  #mommas-bewitched {
+    margin: 0;
+    padding: 0;
     width: 100%;
-  }
+    min-height: 100%;
+    overflow-x: hidden;
+    background: transparent;
+}
 
-  #mommas-video {
+
+/* ============================
+   VIDEO AREA
+============================ */
+
+.video-container {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    line-height: 0;
+}
+
+
+/* VIDEO
+   NO FIXED HEIGHT = NO HUGE
+   BLACK SPACE UNDER VIDEO
+*/
+
+.video-container video {
+    display: block;
     width: 100%;
     height: auto;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
     object-fit: contain;
-  }
+}
+
+
+/* ============================
+   FALLING STARS
+============================ */
+
+#stars {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 999999;
+}
+
+.star {
+    position: absolute;
+    top: -50px;
+
+    color: #fff8ad;
+
+    text-shadow:
+        0 0 4px #ffffff,
+        0 0 8px #fff4a3,
+        0 0 14px #ffe56b,
+        0 0 22px #ffd447;
+
+    animation-name: fallingStar;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+
+/* ============================
+   STAR FALL ANIMATION
+============================ */
+
+@keyframes fallingStar {
+
+    0% {
+        transform:
+            translateY(-60px)
+            rotate(0deg)
+            scale(.6);
+
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translateY(110vh)
+            rotate(360deg)
+            scale(1.1);
+
+        opacity: 0;
+    }
+}
+
+
+/* ============================
+   MOBILE
+============================ */
+
+@media (max-width: 768px) {
+
+    .video-container {
+        width: 100%;
+        height: auto;
+    }
+
+    .video-container video {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
 
 }
 
@@ -95,103 +156,184 @@ body {
 <body>
 
 
-<div id="mommas-bewitched">
+<!-- ==================================
+     MOMMA'S BEWITCHED VIDEO
+=================================== -->
 
-  <video
-    id="mommas-video"
-    autoplay
-    muted
-    loop
-    playsinline
-    webkit-playsinline
-    preload="auto"
-  >
+<div class="video-container">
 
-    <source
-      src="./index.MP4"
-      type="video/mp4"
-    >
+    <video
+        id="mainVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto">
 
-  </video>
+        <source
+            src="index.mp4"
+            type="video/mp4">
+
+        Your browser does not support video.
+
+    </video>
 
 </div>
 
 
+
+<!-- ==================================
+     FALLING STAR LAYER
+=================================== -->
+
+<div id="stars"></div>
+
+
+
 <script>
 
+/* ==================================
+   VIDEO AUTOPLAY
+=================================== */
+
 const video =
-  document.getElementById("mommas-video");
-
-
-/* KEEP VIDEO MUTED FOR AUTOPLAY */
+    document.getElementById("mainVideo");
 
 video.muted = true;
+video.defaultMuted = true;
+
+video.setAttribute("muted", "");
+video.setAttribute("playsinline", "");
+video.setAttribute("webkit-playsinline", "");
 
 
-/* START VIDEO */
+function playVideo() {
 
-function playMommasVideo() {
+    const attempt = video.play();
 
-  const playAttempt =
-    video.play();
+    if (attempt !== undefined) {
 
-  if (playAttempt !== undefined) {
+        attempt.catch(function () {
 
-    playAttempt.catch(function() {
+            video.muted = true;
 
-      /* iPhone may wait for first interaction */
+            video.play().catch(function () {
+                /* Safari may wait for page interaction */
+            });
 
-    });
+        });
 
-  }
+    }
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    playVideo
+);
+
+window.addEventListener(
+    "load",
+    playVideo
+);
+
+
+/* ==================================
+   FALLING STARS
+=================================== */
+
+const starContainer =
+    document.getElementById("stars");
+
+
+const starSymbols = [
+    "✦",
+    "✧",
+    "⋆",
+    "★",
+    "✦"
+];
+
+
+const numberOfStars = 35;
+
+
+for (
+    let i = 0;
+    i < numberOfStars;
+    i++
+) {
+
+    const star =
+        document.createElement("span");
+
+    star.className = "star";
+
+
+    /* RANDOM STAR */
+
+    star.textContent =
+        starSymbols[
+            Math.floor(
+                Math.random() *
+                starSymbols.length
+            )
+        ];
+
+
+    /* RANDOM LEFT POSITION */
+
+    star.style.left =
+        Math.random() * 100 + "vw";
+
+
+    /* RANDOM SIZE */
+
+    star.style.fontSize =
+        (
+            8 +
+            Math.random() * 17
+        ) + "px";
+
+
+    /* RANDOM FALL SPEED */
+
+    star.style.animationDuration =
+        (
+            6 +
+            Math.random() * 10
+        ) + "s";
+
+
+    /* STAGGER STARS */
+
+    star.style.animationDelay =
+        (
+            -Math.random() * 15
+        ) + "s";
+
+
+    starContainer.appendChild(star);
 
 }
 
 
-/* PLAY WHEN READY */
-
-video.addEventListener(
-  "loadeddata",
-  playMommasVideo
-);
-
-video.addEventListener(
-  "canplay",
-  playMommasVideo
-);
-
-
-/* RETRY ON FIRST TOUCH */
+/* ==================================
+   TRY AGAIN AFTER USER TOUCH
+   HELPS WITH MOBILE SAFARI
+=================================== */
 
 document.addEventListener(
-  "touchstart",
-  playMommasVideo,
-  { once: true }
-);
+    "touchstart",
+    function () {
 
+        if (video.paused) {
+            playVideo();
+        }
 
-/* RETRY ON CLICK */
-
-document.addEventListener(
-  "click",
-  playMommasVideo,
-  { once: true }
-);
-
-
-/* RESTART IF USER RETURNS TO TAB */
-
-document.addEventListener(
-  "visibilitychange",
-  function() {
-
-    if (!document.hidden) {
-
-      playMommasVideo();
-
-    }
-
-  }
+    },
+    { once: true }
 );
 
 </script>

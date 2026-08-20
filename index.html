@@ -2,149 +2,291 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
 <title>Momma's Bewitched Creations</title>
 
+
 <style>
 
-/* ============================
-   RESET
-============================ */
+/* =========================================
+   COMPLETE RESET
+========================================= */
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
-    background: transparent;
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  min-height: 100%;
+
+  overflow-x: hidden;
+
+  background: transparent;
 }
 
 
-/* ============================
-   VIDEO AREA
-============================ */
+/* =========================================
+   VIDEO CONTAINER
+========================================= */
 
 .video-container {
-    position: relative;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0;
-    overflow: hidden;
-    background: transparent;
-    line-height: 0;
+
+  position: relative;
+
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+
+  overflow: hidden;
+
+  line-height: 0;
+
 }
 
 
-/* VIDEO
-   NO FIXED HEIGHT = NO HUGE
-   BLACK SPACE UNDER VIDEO
-*/
+/* =========================================
+   VIDEO
 
-.video-container video {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-    object-fit: contain;
+   IMPORTANT:
+   NO fixed height
+   NO 100vh
+   NO aspect ratio
+   NO giant black container
+========================================= */
+
+#mainVideo {
+
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+
+  height: auto;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  object-fit: contain;
+
+  background: transparent;
+
 }
 
 
-/* ============================
-   FALLING STARS
-============================ */
+/* =========================================
+   FALLING STAR OVERLAY
+========================================= */
 
-#stars {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 999999;
-}
+#starLayer {
 
-.star {
-    position: absolute;
-    top: -50px;
+  position: fixed;
 
-    color: #fff8ad;
+  top: 0;
+  left: 0;
 
-    text-shadow:
-        0 0 4px #ffffff,
-        0 0 8px #fff4a3,
-        0 0 14px #ffe56b,
-        0 0 22px #ffd447;
+  width: 100vw;
+  height: 100vh;
 
-    animation-name: fallingStar;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+  overflow: hidden;
+
+  pointer-events: none;
+
+  z-index: 999999;
+
 }
 
 
-/* ============================
-   STAR FALL ANIMATION
-============================ */
+/* =========================================
+   INDIVIDUAL STAR
+========================================= */
 
-@keyframes fallingStar {
+.magic-star {
 
-    0% {
-        transform:
-            translateY(-60px)
-            rotate(0deg)
-            scale(.6);
+  position: absolute;
 
-        opacity: 0;
-    }
+  top: -50px;
 
-    8% {
-        opacity: 1;
-    }
+  display: block;
 
-    85% {
-        opacity: 1;
-    }
+  color: #fff8a8;
 
-    100% {
-        transform:
-            translateY(110vh)
-            rotate(360deg)
-            scale(1.1);
+  opacity: 0;
 
-        opacity: 0;
-    }
+  line-height: 1;
+
+  text-shadow:
+
+    0 0 3px #ffffff,
+
+    0 0 7px #fffbd0,
+
+    0 0 12px #fff09a,
+
+    0 0 20px #ffe66d,
+
+    0 0 30px #ffd84d;
+
+
+  animation-name:
+    starFall,
+    starTwinkle;
+
+  animation-timing-function:
+    linear,
+    ease-in-out;
+
+  animation-iteration-count:
+    infinite,
+    infinite;
+
 }
 
 
-/* ============================
+/* =========================================
+   FALLING ANIMATION
+========================================= */
+
+@keyframes starFall {
+
+  0% {
+
+    transform:
+      translateY(-80px)
+      rotate(0deg)
+      scale(.6);
+
+    opacity: 0;
+
+  }
+
+
+  8% {
+
+    opacity: .9;
+
+  }
+
+
+  50% {
+
+    opacity: 1;
+
+  }
+
+
+  88% {
+
+    opacity: .9;
+
+  }
+
+
+  100% {
+
+    transform:
+      translateY(115vh)
+      rotate(360deg)
+      scale(1.1);
+
+    opacity: 0;
+
+  }
+
+}
+
+
+/* =========================================
+   TWINKLE
+========================================= */
+
+@keyframes starTwinkle {
+
+  0% {
+
+    filter:
+      brightness(.8);
+
+  }
+
+
+  100% {
+
+    filter:
+      brightness(1.8);
+
+  }
+
+}
+
+
+/* =========================================
    MOBILE
-============================ */
+========================================= */
 
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
 
-    .video-container {
-        width: 100%;
-        height: auto;
-    }
+  html,
+  body {
 
-    .video-container video {
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-    }
+    width: 100%;
+
+  }
+
+
+  .video-container {
+
+    width: 100%;
+
+    height: auto;
+
+  }
+
+
+  #mainVideo {
+
+    width: 100%;
+
+    height: auto;
+
+    max-height: none;
+
+    object-fit: contain;
+
+  }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media screen and (max-width: 480px) {
+
+  #mainVideo {
+
+    width: 100%;
+
+    height: auto;
+
+  }
 
 }
 
@@ -153,186 +295,405 @@ body {
 </head>
 
 
+
 <body>
 
 
-<!-- ==================================
+<!-- =====================================
      MOMMA'S BEWITCHED VIDEO
-=================================== -->
+===================================== -->
 
 <div class="video-container">
 
-    <video
-  autoplay
-  muted
-  loop
-  playsinline
-  webkit-playsinline
-  preload="auto"
-  style="display:block;width:100%;height:auto;"
->
-  <source
-    src="./index.mp4"
-    type="video/mp4"
+
+  <video
+
+    id="mainVideo"
+
+    autoplay
+
+    muted
+
+    loop
+
+    playsinline
+
+    webkit-playsinline
+
+    preload="auto"
+
+    disablepictureinpicture
+
   >
-</video>
+
+
+    <!--
+       IMPORTANT:
+
+       Your GitHub screenshot shows:
+
+       index.MP4
+
+       CAPITAL MP4
+    -->
+
+
+    <source
+      src="./index.MP4"
+      type="video/mp4"
+    >
+
+
+    Your browser does not support HTML5 video.
+
+
+  </video>
+
 
 </div>
 
 
 
-<!-- ==================================
-     FALLING STAR LAYER
-=================================== -->
+<!-- =====================================
+     MAGICAL FALLING STARS
+===================================== -->
 
-<div id="stars"></div>
+<div id="starLayer"></div>
 
 
 
 <script>
 
-/* ==================================
-   VIDEO AUTOPLAY
-=================================== */
+
+/* =====================================
+   VIDEO SETUP
+===================================== */
+
 
 const video =
-    document.getElementById("mainVideo");
+  document.getElementById(
+    "mainVideo"
+  );
+
+
+/* Force muted autoplay */
 
 video.muted = true;
+
 video.defaultMuted = true;
 
-video.setAttribute("muted", "");
-video.setAttribute("playsinline", "");
-video.setAttribute("webkit-playsinline", "");
+
+video.setAttribute(
+  "muted",
+  ""
+);
 
 
-function playVideo() {
+video.setAttribute(
+  "playsinline",
+  ""
+);
 
-    const attempt = video.play();
 
-    if (attempt !== undefined) {
+video.setAttribute(
+  "webkit-playsinline",
+  ""
+);
 
-        attempt.catch(function () {
 
-            video.muted = true;
 
-            video.play().catch(function () {
-                /* Safari may wait for page interaction */
-            });
+/* =====================================
+   PLAY VIDEO
+===================================== */
 
-        });
 
-    }
+function startVideo() {
+
+
+  const playAttempt =
+    video.play();
+
+
+  if (
+    playAttempt !== undefined
+  ) {
+
+
+    playAttempt.catch(
+      function () {
+
+
+        video.muted = true;
+
+
+        video.play().catch(
+          function () {
+
+            /* Safari may wait
+               for interaction */
+
+          }
+        );
+
+
+      }
+    );
+
+
+  }
+
+
 }
 
 
+
+/* Try when HTML loads */
+
 document.addEventListener(
-    "DOMContentLoaded",
-    playVideo
+
+  "DOMContentLoaded",
+
+  startVideo
+
 );
+
+
+
+/* Try again when everything loads */
 
 window.addEventListener(
-    "load",
-    playVideo
+
+  "load",
+
+  startVideo
+
 );
 
 
-/* ==================================
+
+/* =====================================
+   iPHONE / SAFARI BACKUP
+===================================== */
+
+
+document.addEventListener(
+
+  "touchstart",
+
+  function () {
+
+
+    if (
+      video.paused
+    ) {
+
+      startVideo();
+
+    }
+
+
+  },
+
+  {
+    once: true,
+    passive: true
+  }
+
+);
+
+
+
+/* =====================================
    FALLING STARS
-=================================== */
-
-const starContainer =
-    document.getElementById("stars");
+===================================== */
 
 
-const starSymbols = [
-    "✦",
-    "✧",
-    "⋆",
-    "★",
-    "✦"
+const starLayer =
+  document.getElementById(
+    "starLayer"
+  );
+
+
+
+const starShapes = [
+
+  "✦",
+
+  "✧",
+
+  "⋆",
+
+  "★",
+
+  "✦",
+
+  "✧"
+
 ];
 
 
-const numberOfStars = 35;
+
+/* Number of stars */
+
+const STAR_COUNT = 30;
+
 
 
 for (
-    let i = 0;
-    i < numberOfStars;
-    i++
+  let i = 0;
+  i < STAR_COUNT;
+  i++
 ) {
 
-    const star =
-        document.createElement("span");
 
-    star.className = "star";
-
-
-    /* RANDOM STAR */
-
-    star.textContent =
-        starSymbols[
-            Math.floor(
-                Math.random() *
-                starSymbols.length
-            )
-        ];
+  const star =
+    document.createElement(
+      "span"
+    );
 
 
-    /* RANDOM LEFT POSITION */
-
-    star.style.left =
-        Math.random() * 100 + "vw";
+  star.className =
+    "magic-star";
 
 
-    /* RANDOM SIZE */
 
-    star.style.fontSize =
-        (
-            8 +
-            Math.random() * 17
-        ) + "px";
+  /* =================================
+     RANDOM STAR SHAPE
+  ================================= */
 
 
-    /* RANDOM FALL SPEED */
+  star.textContent =
 
-    star.style.animationDuration =
-        (
-            6 +
-            Math.random() * 10
-        ) + "s";
+    starShapes[
 
+      Math.floor(
 
-    /* STAGGER STARS */
+        Math.random() *
 
-    star.style.animationDelay =
-        (
-            -Math.random() * 15
-        ) + "s";
+        starShapes.length
+
+      )
+
+    ];
 
 
-    starContainer.appendChild(star);
+
+  /* =================================
+     RANDOM HORIZONTAL POSITION
+  ================================= */
+
+
+  star.style.left =
+
+    Math.random() *
+
+    100 +
+
+    "vw";
+
+
+
+  /* =================================
+     RANDOM SIZE
+  ================================= */
+
+
+  const size =
+
+    8 +
+
+    Math.random() *
+
+    17;
+
+
+  star.style.fontSize =
+
+    size +
+
+    "px";
+
+
+
+  /* =================================
+     RANDOM FALL SPEED
+  ================================= */
+
+
+  const fallSpeed =
+
+    7 +
+
+    Math.random() *
+
+    9;
+
+
+
+  const twinkleSpeed =
+
+    1 +
+
+    Math.random() *
+
+    2;
+
+
+
+  star.style.animationDuration =
+
+    fallSpeed +
+
+    "s, " +
+
+    twinkleSpeed +
+
+    "s";
+
+
+
+  /* =================================
+     RANDOM STARTING TIMES
+  ================================= */
+
+
+  const fallDelay =
+
+    -Math.random() *
+
+    15;
+
+
+
+  const twinkleDelay =
+
+    -Math.random() *
+
+    3;
+
+
+
+  star.style.animationDelay =
+
+    fallDelay +
+
+    "s, " +
+
+    twinkleDelay +
+
+    "s";
+
+
+
+  /* Add star */
+
+  starLayer.appendChild(
+    star
+  );
+
 
 }
 
-
-/* ==================================
-   TRY AGAIN AFTER USER TOUCH
-   HELPS WITH MOBILE SAFARI
-=================================== */
-
-document.addEventListener(
-    "touchstart",
-    function () {
-
-        if (video.paused) {
-            playVideo();
-        }
-
-    },
-    { once: true }
-);
 
 </script>
 

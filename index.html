@@ -4,27 +4,28 @@
 <head>
 <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Momma's Bewitched Creations</title>
 
 <style>
 
-/* RESET */
+/* ==============================
+   RESET
+============================== */
+
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background: #000;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: #000;
+    overflow-x: hidden;
 }
 
 
@@ -32,29 +33,28 @@ body {
    VIDEO
 ============================== */
 
-.video-wrap {
-  position: relative;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  background: #000;
-  overflow: hidden;
+.video-section {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #000;
 }
 
-.video-wrap video {
-  display: block;
+.video-section video {
+    display: block;
 
-  width: 100%;
-  height: auto;
+    width: 100%;
+    height: auto;
 
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 
-  border: 0;
+    border: none;
 
-  object-fit: contain;
+    background: #000;
 
-  background: #000;
+    object-fit: contain;
 }
 
 
@@ -62,99 +62,90 @@ body {
    FALLING STARS
 ============================== */
 
-#stars {
-  position: fixed;
+.stars {
+    position: fixed;
 
-  inset: 0;
+    top: 0;
+    left: 0;
 
-  width: 100vw;
-  height: 100vh;
+    width: 100vw;
+    height: 100vh;
 
-  overflow: hidden;
+    pointer-events: none;
+    overflow: hidden;
 
-  pointer-events: none;
-
-  z-index: 9999;
+    z-index: 9999;
 }
 
 
 .star {
-  position: absolute;
+    position: absolute;
 
-  top: -40px;
+    top: -40px;
 
-  color: #fff7a8;
+    color: #fff7a8;
 
-  line-height: 1;
+    line-height: 1;
 
-  text-shadow:
-    0 0 4px #fff,
-    0 0 8px #fff4a0,
-    0 0 15px #ffe66d,
-    0 0 25px #ffd84d;
+    text-shadow:
+        0 0 4px #ffffff,
+        0 0 8px #fff4a0,
+        0 0 15px #ffe56b,
+        0 0 25px #ffd54a;
 
-  animation:
-    fall linear infinite,
-    twinkle ease-in-out infinite alternate;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 
+
+/* ==============================
+   STAR ANIMATION
+============================== */
 
 @keyframes fall {
 
-  0% {
-    transform:
-      translateY(-60px)
-      rotate(0deg);
+    0% {
+        transform:
+            translateY(-60px)
+            rotate(0deg);
 
-    opacity: 0;
-  }
+        opacity: 0;
+    }
 
-  10% {
-    opacity: 1;
-  }
+    10% {
+        opacity: 1;
+    }
 
-  85% {
-    opacity: 1;
-  }
+    85% {
+        opacity: 1;
+    }
 
-  100% {
-    transform:
-      translateY(110vh)
-      rotate(360deg);
+    100% {
+        transform:
+            translateY(110vh)
+            rotate(360deg);
 
-    opacity: 0;
-  }
-
-}
-
-
-@keyframes twinkle {
-
-  from {
-    filter: brightness(.8);
-  }
-
-  to {
-    filter: brightness(1.8);
-  }
+        opacity: 0;
+    }
 
 }
 
 
 /* ==============================
-   PHONE
+   MOBILE
 ============================== */
 
 @media screen and (max-width: 768px) {
 
-  .video-wrap {
-    width: 100%;
-  }
+    .video-section {
+        width: 100%;
+    }
 
-  .video-wrap video {
-    width: 100%;
-    height: auto;
-  }
+    .video-section video {
+        width: 100%;
+        height: auto;
+    }
 
 }
 
@@ -167,30 +158,27 @@ body {
 
 
 <!-- ==============================
-     VIDEO
+     MOMMA'S BEWITCHED VIDEO
 ============================== -->
 
-<div class="video-wrap">
+<div class="video-section">
 
-  <video
-    id="mainVideo"
-    autoplay
-    muted
-    loop
-    playsinline
-    webkit-playsinline
-    preload="metadata"
-    controls
-  >
+    <video
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        controls>
 
-    <source
-      src="https://500blueprint.github.io/Kristy/index.MP4"
-      type="video/mp4"
-    >
+        <source
+            src="https://500blueprint.github.io/Kristy/index.MP4"
+            type="video/mp4">
 
-    Your browser does not support HTML5 video.
+        Your browser does not support HTML5 video.
 
-  </video>
+    </video>
 
 </div>
 
@@ -200,101 +188,79 @@ body {
      FALLING STARS
 ============================== -->
 
-<div id="stars"></div>
-
+<div class="stars" id="stars"></div>
 
 
 <script>
 
 /* ==============================
-   STARS
+   CREATE FALLING STARS
 ============================== */
 
-const stars =
-  document.getElementById("stars");
+const starContainer =
+    document.getElementById("stars");
 
 
 const symbols = [
-  "✦",
-  "✧",
-  "⋆",
-  "★"
+    "✦",
+    "✧",
+    "★",
+    "⋆"
 ];
 
 
-for (let i = 0; i < 28; i++) {
+for (let i = 0; i < 30; i++) {
 
-  const star =
-    document.createElement("span");
-
-
-  star.className = "star";
+    const star =
+        document.createElement("span");
 
 
-  star.textContent =
-    symbols[
-      Math.floor(
-        Math.random() *
-        symbols.length
-      )
-    ];
+    star.className = "star";
 
 
-  star.style.left =
-    Math.random() * 100 + "vw";
+    star.textContent =
+        symbols[
+            Math.floor(
+                Math.random() *
+                symbols.length
+            )
+        ];
 
 
-  star.style.fontSize =
-    (8 + Math.random() * 16) +
-    "px";
+    /* RANDOM POSITION */
+
+    star.style.left =
+        Math.random() * 100 + "vw";
 
 
-  star.style.animationDuration =
-    (7 + Math.random() * 9) +
-    "s, " +
-    (1 + Math.random() * 2) +
-    "s";
+    /* RANDOM SIZE */
+
+    star.style.fontSize =
+        (8 + Math.random() * 16) +
+        "px";
 
 
-  star.style.animationDelay =
-    (-Math.random() * 14) +
-    "s, " +
-    (-Math.random() * 2) +
-    "s";
+    /* RANDOM FALL SPEED */
+
+    star.style.animationDuration =
+        (7 + Math.random() * 10) +
+        "s";
 
 
-  stars.appendChild(star);
+    /* RANDOM START TIME */
+
+    star.style.animationDelay =
+        (-Math.random() * 15) +
+        "s";
+
+
+    starContainer.appendChild(star);
 
 }
-
-
-/* ==============================
-   AUTOPLAY BACKUP
-============================== */
-
-const video =
-  document.getElementById("mainVideo");
-
-
-video.muted = true;
-
-
-window.addEventListener(
-  "load",
-  function() {
-
-    video.play().catch(function() {
-
-      /* Controls remain visible
-         if iPhone blocks autoplay */
-
-    });
-
-  }
-);
 
 </script>
 
 
 </body>
+
 </html>
